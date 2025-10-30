@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "933828354831",
+    "project_id": "flashcard-d4fae",
+    "storage_bucket": "flashcard-d4fae.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933828354831:android:f168f777e3110ca759147a",
+        "android_client_info": {
+          "package_name": "com.kornita.androidfc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933828354831-24ukrim07ttfk165gqhhhsn12tjd0ss7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq-JPbhCMGlIWD8i1BS5yCOJZrw8L60jg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933828354831-24ukrim07ttfk165gqhhhsn12tjd0ss7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "933828354831-0vqdqmtn1njcrptia4s34a467pq5ml9m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kornita.flashcard"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

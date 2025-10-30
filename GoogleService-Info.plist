@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>933828354831-a3kmj68bmk350itmajgs9eaacpqihroc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.933828354831-a3kmj68bmk350itmajgs9eaacpqihroc</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAJsYYAOWsvu5tO998OGgCI9lQnvF2nMcw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>933828354831</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.kornita.flashcard</string>
+	<key>PROJECT_ID</key>
+	<string>flashcard-d4fae</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flashcard-d4fae.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:933828354831:ios:211eee90e279d5f159147a</string>
+</dict>
+</plist>
