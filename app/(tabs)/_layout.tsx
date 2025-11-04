@@ -1,13 +1,14 @@
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, Tabs } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Platform } from 'react-native';
-import { auth } from '../firebase/firebaseConfig';
+import { HapticTab } from "../../components/HapticTab";
+import { IconSymbol } from '../../components/ui/IconSymbol';
+import TabBarBackground from '../../components/ui/TabBarBackground';
+import { Colors } from '../../constants/Colors';
+import { auth } from '../../firebase/firebaseConfig';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -48,14 +49,14 @@ export default function TabLayout() {
         name="review"
         options={{
           title: 'My Cards',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="menucard.fill" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="cards" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="create"
         options={{
           title: 'Create',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="plus.app.fill" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="plus-circle" size={28} color={color} />,
         }}
       />
       <Tabs.Screen

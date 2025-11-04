@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { auth } from './firebase/firebaseConfig';
+import { auth } from '../firebase/firebaseConfig';
 
 export default function Index() {
   const [isChecking, setIsChecking] = useState(true);

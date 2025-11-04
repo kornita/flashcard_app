@@ -1,20 +1,22 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
+import * as Device from 'expo-device';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  ScrollView,
+  ActivityIndicator, Platform, ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
-import { auth } from '../firebase/firebaseConfig';
-import { getCompletedChallenges, getPendingChallenges, getUserXP } from '../firebase/firestore';
+import { auth, db } from '../../firebase/firebaseConfig';
+import { getCompletedChallenges, getPendingChallenges, getUserXP } from '../../firebase/firestore';
 
 interface Challenge {
   id: string;
@@ -38,6 +40,31 @@ interface CompletedChallenge {
   completedAt: any;
 }
 
+export async function registerPushToken() {
+  if (!Device.isDevice) return;
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') return;
+
+  const token = (await Notifications.getExpoPushTokenAsync()).data;
+  const uid = auth.currentUser?.uid;
+  if (uid) {
+    await setDoc(doc(db, 'users', uid), { expoPushToken: token }, { merge: true });
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+    });
+  }
+}
+
 export default function HomeScreen() {
   const [user, setUser] = useState<User | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -48,11 +75,31 @@ export default function HomeScreen() {
   const [userXP, setUserXP] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    // Auth listener
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      // Optionally register push token here after login
+      if (currentUser) {
+        registerPushToken(); // call your function from step 2
+      }
     });
 
-    return () => unsubscribe();
+    // Notification received listener
+    const receivedListener = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+    });
+
+    // Notification tapped listener
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log('Notification tapped:', response);
+      // e.g., navigate to challenge screen
+    });
+
+    return () => {
+      unsubscribeAuth();
+      receivedListener.remove();
+      responseListener.remove();
+    };
   }, []);
 
   useFocusEffect(
@@ -280,7 +327,7 @@ export default function HomeScreen() {
         <View style={styles.profileContainer}>
           {user ? (
             <TouchableOpacity onPress={handleSignOut} style={styles.profileTouchable}>
-              <Text style={styles.signOutText}>Sign Out</Text>
+              <MaterialCommunityIcons name="logout" size={24} color="#df2b2bff" style={styles.signOutText}/>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={handleSignIn} style={styles.signInButton}>
@@ -308,7 +355,7 @@ export default function HomeScreen() {
             >
               <View style={styles.challengeContent}>
                 <View style={styles.xpBadge}>
-                  <Text style={styles.xpText}>+{challenges.length * 100} XP</Text>
+                  <Text style={styles.xpText}>+{challenges.length * 10} XP</Text>
                 </View>
                 
                 <View style={styles.challengeInfo}>
@@ -512,9 +559,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   signOutText: {
-    fontSize: 12,
     fontWeight: '600',
-    color: '#e10a31ff',
     textAlign: 'center',
   },
   signInButton: {
@@ -531,7 +576,7 @@ const styles = StyleSheet.create({
   },
   challengeCard: {
     marginHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 7,
     borderRadius: 16,
     overflow: 'hidden',
     elevation: 4,
@@ -649,10 +694,8 @@ const styles = StyleSheet.create({
   quickActionsCard: {
     backgroundColor: '#fff',
     marginHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 5,
     borderRadius: 16,
-    //alignItems: 'center',
-    justifyContent: 'center',
     padding: 20,
     elevation: 2,
     shadowColor: '#000',
@@ -663,7 +706,7 @@ const styles = StyleSheet.create({
   actionsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',   
-    gap: 12,
+    gap: 5,
     justifyContent: 'center',
   },
   cardButton: {
@@ -671,7 +714,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderWidth: 1,
     borderStyle: 'dashed',
-    width: '49%',
+    width: '48%',
     borderRadius: 12,
     justifyContent: 'center',
     gap: 8,

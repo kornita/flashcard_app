@@ -3,7 +3,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // Add this to the imports at the top
 import { collection, doc, getDoc, getDocs, query, where, } from 'firebase/firestore';
 import {
@@ -21,7 +21,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { auth, db } from './firebase/firebaseConfig';
+import { auth, db } from '../firebase/firebaseConfig';
 import {
   deleteCard,
   deleteSharedCard,
@@ -31,7 +31,7 @@ import {
   sendChallenge,
   updateCard,
   updateSharedCard
-} from './firebase/firestore';
+} from '../firebase/firestore';
 
 interface Card {
   id: string;
@@ -858,6 +858,27 @@ const sendChallengeToFriends = async () => {
     
     console.log('Challenge sent with ID:', challengeId);
 
+        // ===== ADD PUSH NOTIFICATIONS HERE =====
+      selectedFriends.forEach(async friendId => {
+        const friendDocRef = doc(db, 'users', friendId); // v9: doc reference
+        const friendDocSnap = await getDoc(friendDocRef); // v9: getDoc
+        const token = friendDocSnap.data()?.expoPushToken;
+        if (token) {
+          await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: token,
+              sound: 'default',
+              title: 'New Challenge!',
+              body: `${challengeData.senderName} sent you a challenge`,
+              data: { challengeId, cardId: challengeData.cardId },
+            }),
+          });
+        }
+      });
+    // ======================================
+
     setSendingChallenge(false);
     setShowFriendModal(false);
     
@@ -1015,6 +1036,7 @@ const sendChallengeToFriends = async () => {
         options={{
           title: 'My Flashcards',
           headerBackTitle: 'Back',
+          headerTitleAlign: 'center', // ✅ add this
           headerShown: true,
           headerTitleStyle: {
             fontSize: 18,
@@ -1158,12 +1180,12 @@ const sendChallengeToFriends = async () => {
                 { zIndex: backZIndex }
               ]}
             >
-              <TouchableOpacity onPress={handleShareCard} style={styles.shareContainer}>
-                <FontAwesome name="paper-plane" size={18} color="#007AFF" />
-              </TouchableOpacity>
-
               <TouchableOpacity onPress={handleStarPress} style={styles.starContainer}>
                 <Text style={[styles.starIcon, isStarred && styles.starIconFilled]}>★</Text>
+              </TouchableOpacity> 
+
+              <TouchableOpacity onPress={handleShareCard} style={styles.shareContainer}>
+                <FontAwesome name="paper-plane" size={18} color="#007AFF" />
               </TouchableOpacity>
 
               <Text style={styles.wordTitleBack}>{currentCardData?.vocabulary || 'Loading...'}</Text>
@@ -1213,10 +1235,10 @@ const sendChallengeToFriends = async () => {
           <View style={styles.moreMenuRow}>
             <TouchableOpacity style={[styles.menuItem, styles.menuItemFlex]} onPress={handleEditCard}>
               <LinearGradient
-                colors={loading ? ['#ccc', '#999'] : ['#FFA726', '#FF7043']}
+                colors={loading ? ['#ccc', '#999'] : ["#FFC107", "#4CAF50"]}
                 style={styles.gradientButton}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+                start={{ x: 0, y: 1 }}
+                end={{ x: 1, y: 1 }}
               >
                 <FontAwesome name="edit" size={16} color="white" />
                 <Text style={styles.menuText}>Edit</Text>
@@ -1225,7 +1247,7 @@ const sendChallengeToFriends = async () => {
 
             <TouchableOpacity style={[styles.menuItem, styles.menuItemDanger, styles.menuItemFlex]} onPress={handleDeleteCard}>
               <LinearGradient
-                colors={loading ? ['#ccc', '#999'] : ['#FFA726', '#FF7043']}
+                colors={loading ? ['#ccc', '#999'] : ["#FFC107", "#4CAF50"]}
                 style={styles.gradientButton}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -1327,7 +1349,7 @@ const sendChallengeToFriends = async () => {
               <Text style={styles.challengeInfoTitle}>📚 Challenge Card:</Text>
               <Text style={styles.challengeInfoText}>"{currentCardData?.vocabulary}"</Text>
               <Text style={styles.challengeInfoSubtext}>
-                Your friends will need to guess the correct definition!
+                Your friends will need to guess the correct word!
               </Text>
             </View>
 
@@ -1439,7 +1461,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   backButton: {
     padding: 5,
@@ -1472,7 +1494,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     fontWeight: '400',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   headerMain: {
     flex: 1,
@@ -1525,7 +1547,7 @@ const styles = StyleSheet.create({
   },
   progressSection: {
     paddingHorizontal: 10,
-    marginBottom: 60,
+    marginBottom: 50,
   },
   progressText: {
     fontSize: 14,
@@ -1551,9 +1573,10 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     flex: 1,
-    paddingHorizontal: 35,
+    paddingHorizontal: 35,  
+    paddingBottom: 120,
     justifyContent: 'center',
-    marginBottom: 120,
+    //marginBottom: 120,
   },
   cardTouchable: {
     height: 350,
@@ -1564,10 +1587,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#fff',
     borderRadius: 20,
-    paddingTop: 20,
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingBottom: 20,
+    padding:40,
     alignItems: 'center',
     elevation: 4,
     shadowColor: '#000',
@@ -1581,20 +1601,21 @@ const styles = StyleSheet.create({
   },
   cardBack: {
     justifyContent: 'flex-start',
-    paddingTop: 20,
+    paddingTop: 15,
   },
   starContainer: {
     position: 'absolute',
-    top: 15,
-    right: 15,
+    top: 10,
+    left: 10,
     zIndex: 10,
+    padding: 6,
   },
   shareContainer: {
     position: 'absolute',
     top: 15,
-    left: 15,
+    right: 15,
     zIndex: 10,
-    padding: 6,
+    padding: 10,
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 15,
     elevation: 2,
@@ -1625,7 +1646,7 @@ const styles = StyleSheet.create({
     height: 160,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical:10,
   },
   cardImage: {
     width: 150,
@@ -1645,7 +1666,7 @@ const styles = StyleSheet.create({
   },
   vocabularyContainer: {
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   wordTitle: {
     fontSize: 18,
@@ -1697,7 +1718,7 @@ const styles = StyleSheet.create({
   },
   tapButtonText: {
     fontSize: 12,
-    color: '#007AFF',
+    color: '#999',
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -1736,7 +1757,7 @@ const styles = StyleSheet.create({
   },
   pictureButtonText: {
     fontSize: 12,
-    color: '#007AFF',
+    color: '#999',
     fontWeight: '500',
     textAlign: 'center',
   },

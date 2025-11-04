@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -20,7 +21,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { auth } from './firebase/firebaseConfig';
+import { auth } from '.././firebase/firebaseConfig';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -160,7 +161,9 @@ export default function LoginScreen() {
               onPress={() => setShowPassword(!showPassword)}
               style={styles.eyeButton}
             >
-              <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+              <Text>{showPassword ? 
+              <MaterialCommunityIcons name="eye" size={20} color="#333"/> : <MaterialCommunityIcons name="eye-closed" size={20} color="#333"/>}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -174,10 +177,10 @@ export default function LoginScreen() {
             disabled={isLoading}
           >
             <LinearGradient
-              colors={['#4285F4', '#34A853']}
+              colors={['#FFC107', '#4CAF50']}
               style={styles.loginGradient}
               start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
             >
               <Text style={styles.loginButtonText}>
                 {isLoading ? 'Signing In...' : 'Login'}
@@ -222,11 +225,20 @@ const styles = StyleSheet.create({
   input: { backgroundColor: '#fff', borderRadius: 12, padding: 15, fontSize: 16 },
   passwordContainer: { position: 'relative', marginBottom: 10 },
   passwordInput: { backgroundColor: '#fff', borderRadius: 12, padding: 15, paddingRight: 50, fontSize: 16 },
-  eyeButton: { position: 'absolute', right: 15, top: 18 },
+  eyeButton: { position: 'absolute', right: 15, top: 15 },
   forgotPasswordText: { color: '#666', textAlign: 'right', marginBottom: 10 },
-  loginButton: { borderRadius: 12, overflow: 'hidden', marginVertical: 10 },
+  loginButton: {     
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginTop: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   loginGradient: { paddingVertical: 15, alignItems: 'center' },
-  loginButtonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
+  loginButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   orText: { textAlign: 'center', marginVertical: 10 },
   googleButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 12, borderWidth: 1, borderColor: '#ccc' },
   googleButtonText: { color: '#000', fontSize: 14, fontWeight: '600' },

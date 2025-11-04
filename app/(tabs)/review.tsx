@@ -1,10 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, doc as docRef, getDoc, updateDoc } from 'firebase/firestore';
 import { useCallback, useState } from "react";
+
 import {
   ActivityIndicator,
   Alert,
@@ -17,13 +19,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { auth, db } from "../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
 import {
   createTopic,
   getSharedCardsForRecipient, // Add this new import
   getTopics,
   updateTopic
-} from "../firebase/firestore";
+} from "../../firebase/firestore";
 
 // ---------------- Types ----------------
 interface Topic {
@@ -250,6 +252,17 @@ const loadTopics = useCallback(async () => {
     console.log('Shared groups:', senderGroups.length);
     console.log('Total shared cards:', uniqueSharedCardsCount);
     console.log('Total cards:', totalUniqueCards);
+    // 8️⃣ Update total cards in users collection
+    try {
+      const userId = auth.currentUser?.uid;
+      if (userId) {
+        const userDocRef = docRef(db, 'users', userId);
+        await updateDoc(userDocRef, { totalCards: totalUniqueCards });
+        console.log(`✅ Updated totalCards (${totalUniqueCards}) for user ${userId}`);
+      }
+    } catch (error) {
+      console.error('❌ Failed to update totalCards in users collection:', error);
+    }
 
   } catch (error) {
     console.error("❌ Error loading topics:", error);
@@ -566,7 +579,9 @@ const loadTopics = useCallback(async () => {
                   {/* Shared badge - For sender groups */}
                   {topic.isShared && (
                     <View style={styles.sharedBadge}>
-                      <Text style={styles.sharedBadgeText}>👥</Text>
+                      <Text style={styles.sharedBadgeText}>
+                        <MaterialCommunityIcons name="account-multiple" size={16} color="#999" />
+                      </Text>
                     </View>
                   )}
 
@@ -618,7 +633,8 @@ const loadTopics = useCallback(async () => {
           </View>
         ) : selectedTab === 'shared' && sharedTopics.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>👥</Text>
+            <Text style={styles.emptyIcon}>
+            <MaterialCommunityIcons name="account-multiple" size={48} color="#333" /></Text>
             <Text style={styles.emptyTitle}>No shared cards</Text>
             <Text style={styles.emptyText}>
               Cards shared with you from friends will appear here
@@ -824,7 +840,7 @@ const styles = StyleSheet.create({
   },
   searchSection: {
     paddingHorizontal: 20,
-    marginBottom: 10
+    marginBottom: 8
   },
   searchContainer: {
     flexDirection: 'row',
@@ -915,7 +931,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    marginTop: 10,
+    marginTop: 2,
     marginBottom: 10,
     gap: 10,
   },
@@ -923,7 +939,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 10,
     alignItems: 'center',
     elevation: 1,
     shadowColor: '#000',
@@ -932,7 +948,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   tabActive: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FFC107',
   },
   tabText: {
     fontSize: 14,
@@ -948,7 +964,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15,
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
     borderRadius: 16,
     elevation: 2,
     shadowColor: '#000',
@@ -957,21 +973,24 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   categoryGrid: {
-    paddingHorizontal: 15,
     flexDirection: 'row',
-    justifyContent: 'center',
     flexWrap: 'wrap',
-    gap: 10
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 2,
+    gap: 10, // optional; works in RN 0.71+ or Expo SDK 50+
   },
+
   categoryCard: {
-    width: '49%',
+    width: '48%',
     borderRadius: 16,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     padding: 15,
     minHeight: 100,
-    position: 'relative',
+    backgroundColor: '#fff',
   },
+  
   cardActions: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -985,13 +1004,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
   },
   sharedBadgeText: {
-    fontSize: 14,
+    fontSize: 16,
   },
   categoryContent: {
     flex: 1,

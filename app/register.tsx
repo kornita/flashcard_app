@@ -1,7 +1,8 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -13,7 +14,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { auth } from './firebase/firebaseConfig';
+import { auth } from '../firebase/firebaseConfig';
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
@@ -152,7 +153,9 @@ export default function RegisterScreen() {
                   onPress={() => setShowPassword(!showPassword)}
                   style={styles.eyeButton}
                 >
-                  <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                  <Text style={styles.eyeIcon}>{showPassword ? 
+                  <MaterialCommunityIcons name="eye" size={20} color="#333"/> : <MaterialCommunityIcons name="eye-closed" size={20} color="#333"/>}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -173,7 +176,9 @@ export default function RegisterScreen() {
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                   style={styles.eyeButton}
                 >
-                  <Text style={styles.eyeIcon}>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                  <Text style={styles.eyeIcon}>{showConfirmPassword ? 
+                  <MaterialCommunityIcons name="eye" size={20} color="#333"/> : <MaterialCommunityIcons name="eye-closed" size={20} color="#333"/>}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -185,7 +190,7 @@ export default function RegisterScreen() {
               disabled={isLoading}
             >
               <LinearGradient
-                colors={['#FFA726', '#FF7043']}
+                colors={['#FFC107', '#4CAF50']}
                 style={styles.registerGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -214,7 +219,7 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 120,
+    paddingTop: 60,
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
@@ -272,14 +277,14 @@ const styles = StyleSheet.create({
   eyeButton: {
     position: 'absolute',
     right: 15,
-    top: 18,
+    top: 15,
     padding: 2,
   },
   eyeIcon: {
     fontSize: 20,
   },
   registerButton: {
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
     marginTop: 20,
     elevation: 2,
@@ -294,7 +299,7 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
   orText: {

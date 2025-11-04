@@ -2,7 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, Stack } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { addSharedCardFromChallenge, addUserXP, completeChallenge, getPendingChallenges, getTopics, rejectChallenge } from './firebase/firestore';
+import { addSharedCardFromChallenge, addUserXP, completeChallenge, getPendingChallenges, getTopics, rejectChallenge } from '../firebase/firestore';
 
 interface Challenge {
   id: string;
@@ -156,7 +156,7 @@ export default function ChallengeScreen() {
       setSubmitting(true);
   
       // Calculate score based on correctness
-      const score = isAnswerCorrect ? 100 : 0;
+      const score = isAnswerCorrect ? 10 : 0;
       
       console.log('🎯 Submitting challenge:', currentChallenge.id);
       console.log('✅ Is correct:', isAnswerCorrect);
@@ -192,10 +192,10 @@ export default function ChallengeScreen() {
       await addCardToCollection(currentChallenge);
 
       // Add XP
-      await addUserXP(100);
+      await addUserXP(10);
 
       setShowRewardModal(false);
-      Alert.alert('Success!', 'Card added and +100 XP earned! 🎉');
+      Alert.alert('Success!', 'Card added and +10 XP earned! 🎉');
     } catch (error) {
       console.error('Error adding card and XP:', error);
       Alert.alert('Error', 'Failed to add card or XP');
@@ -205,10 +205,10 @@ export default function ChallengeScreen() {
   const handleXPOnly = async () => {
     try {
       // Only add XP
-      await addUserXP(100);
+      await addUserXP(10);
       
       setShowRewardModal(false);
-      Alert.alert('Success!', '+100 XP earned! 🎉');
+      Alert.alert('Success!', '+10 XP earned! 🎉');
     } catch (error) {
       console.error('Error adding XP:', error);
       Alert.alert('Error', 'Failed to add XP');
@@ -345,7 +345,7 @@ const addCardToCollection = async (challenge: Challenge) => {
   }
 
   const currentChallenge = challenges[currentChallengeIndex];
-  const progressPercentage = ((currentChallengeIndex + 1) / challenges.length) * 100;
+  const progressPercentage = ((currentChallengeIndex + 1) / challenges.length) * 10;
   const frontZIndex = showResult ? 0 : 2;
   const backZIndex = showResult ? 2 : 0;
 
@@ -380,8 +380,7 @@ const addCardToCollection = async (challenge: Challenge) => {
           <View style={styles.challengeHeaderContent}>
             <View style={styles.challengeHeaderLeft}>
               <Text style={styles.challengeFromText}>Challenge from</Text>
-              <Text style={styles.senderName}>{currentChallenge.senderName}</Text>
-              <Text style={styles.topicBadge}>📚 {currentChallenge.card.topicName}</Text>
+              <Text style={styles.senderName}>{currentChallenge.senderName} - {currentChallenge.card.topicName}</Text>
             </View>
             <TouchableOpacity 
               style={styles.rejectButton}
@@ -531,7 +530,7 @@ const addCardToCollection = async (challenge: Challenge) => {
                     onPress={handleNextChallenge}
                   >
                     <LinearGradient
-                      colors={['#4CAF50', '#45a049']}
+                      colors={['#FFC107', '#4CAF50']}
                       style={styles.nextGradient}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
@@ -570,7 +569,7 @@ const addCardToCollection = async (challenge: Challenge) => {
                       onPress={handleTryAgain}
                     >
                       <LinearGradient
-                        colors={['#FFA726', '#FF7043']}
+                        colors={['#FFC107', '#4CAF50']}
                         style={styles.tryAgainGradient}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
@@ -613,7 +612,7 @@ const addCardToCollection = async (challenge: Challenge) => {
           <View style={styles.modalOverlay}>
             <View style={styles.rewardModalContainer}>
               <Text style={styles.rewardModalTitle}>🎉 Congratulations!</Text>
-              <Text style={styles.rewardModalSubtitle}>You earned 100 XP!</Text>
+              <Text style={styles.rewardModalSubtitle}>You earned 10 XP!</Text>
               <View style={styles.rewardOptionsContainer}>
                 <Text style={styles.rewardOptionsTitle}>What would you like to do?</Text>
       
@@ -693,7 +692,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   backButton: {
     backgroundColor: '#007AFF',
@@ -758,9 +757,7 @@ const styles = StyleSheet.create({
     color: '#FF3B30',
   },
   progressSection: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    marginBottom: 10,
+    paddingVertical: 15,
   },
   progressText: {
     fontSize: 14,
@@ -795,6 +792,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: -50,
   },
   card: {
     position: 'absolute',
@@ -851,7 +849,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   definitionSection: {
-    marginBottom: 16,
+    marginBottom: 10,
   },
   sectionLabel: {
     fontSize: 13,
@@ -865,7 +863,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   answerSection: {
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 20,
   },
   answerLabel: {
@@ -885,7 +883,7 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
   },
   submitButton: {
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
     elevation: 2,
     shadowColor: '#000',

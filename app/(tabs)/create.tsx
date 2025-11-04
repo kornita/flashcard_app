@@ -3,7 +3,7 @@ import { Audio } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -18,8 +18,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { addCardWithTopic, getTopics } from '../firebase/firestore';
-import { uploadImage } from '../firebase/storage';
+import { addCardWithTopic, getTopics } from '../../firebase/firestore';
+import { uploadImage } from '../../firebase/storage';
 
 interface Topic {
   id: string;
@@ -856,7 +856,7 @@ export default function CreateScreen() {
               disabled={loading}
             >
               <LinearGradient
-                colors={loading ? ['#ccc', '#999'] : ['#FFA726', '#FF7043']}
+                colors={loading ? ['#ccc', '#999'] : ['#FFC107', '#4CAF50']}
                 style={styles.saveGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -1024,7 +1024,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   textInput: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#333',
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -1270,7 +1270,7 @@ const styles = StyleSheet.create({
   },
   imageUploadText: {
     fontSize: 12,
-    color: '#666',
+    color: '#999',
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -1310,21 +1310,19 @@ const styles = StyleSheet.create({
   },
   
   saveButton: {
-    borderRadius: 25,
+    borderRadius: 16,
     overflow: 'hidden',
   },
   saveButtonDisabled: {
     opacity: 0.7,
   },
   saveGradient: {
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 50,
   },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#fff',
   },
@@ -1341,7 +1339,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#e0e0e0',
     elevation: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },

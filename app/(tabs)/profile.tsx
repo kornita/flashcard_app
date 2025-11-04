@@ -27,7 +27,7 @@ import {
   updateDoc,
   where
 } from 'firebase/firestore';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -42,7 +42,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { auth, db } from '../firebase/firebaseConfig';
+import { auth, db } from '../../firebase/firebaseConfig';
 
 interface UserStats {
   totalXP: number;
@@ -984,7 +984,7 @@ const removeFriend = async (friendId: string, friendName: string) => {
                 </View>
               ) : (
                 <View style={styles.infoValueContainer}>
-                  <Text style={styles.headerName}>{displayName || 'Not set'}   </Text>
+                  <Text style={styles.headerName}>{displayName || 'Not set'}  </Text>
                   <TouchableOpacity onPress={() => setIsEditingName(true)}>
                        <MaterialCommunityIcons name="pencil" size={20} color="#fff" />
                   </TouchableOpacity>
@@ -1467,6 +1467,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   profileHeader: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
   avatarContainer: {
@@ -1488,10 +1489,12 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
   },
   headerName: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '700',
+    justifyContent: 'center',
+    alignItems: 'center',
     color: '#fff',
-    marginBottom: 4,
+    marginBottom: 10,
   },
   headerEmail: {
     fontSize: 14,
